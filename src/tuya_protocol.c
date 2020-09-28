@@ -186,6 +186,11 @@ int TuyaProtocolStackOutput(uint8_t cmd, uint8_t version, uint8_t *payload, uint
         return -1;
     }
 
+    if (payload_len > 256) {
+        LOGE(TAG, "payload too long, cannot > 256 bytes");
+        return -1;
+    }
+
     packet->sync1           = SYNC_WORD1;
     packet->sync2           = SYNC_WORD2;
     packet->version         = version;
