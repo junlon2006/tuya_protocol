@@ -37,6 +37,7 @@ typedef void (*user_data)(uint8_t *data, uint32_t bytes_len, uint8_t cmd);
 typedef struct {
     void* (*malloc_fn)(unsigned long size);             /**< malloc hook */
     void  (*free_fn)(void *ptr);                        /**< free hook */
+    void* (*realloc_fn)(void *ptr, unsigned long size); /**< realloc hook */
 } tuya_protocol_hooks_t;
 
 /**
@@ -60,16 +61,17 @@ int TuyaProtocolStackInit(send_data send_handler, user_data user_handler);
  * @param[in] bytes_len 接收到的数据长度
  * @return    void
  */
-void TuyaProtocolStackInput(uint8_t *data, uint32_t bytes_len);
+void TuyaProtocolStackInput(uint8_t *data, uint16_t bytes_len);
 
 /**
  * @brief                 协议栈发送消息函数
  * @param[in] cmd         发送消息的类型，该类型是全局唯一的，标识一个消息类型
+ * @param[in] version     版本号
  * @param[in] payload     cmd对应的消息包含的参数，如没有参数则设置为NULL
  * @param[in] payload_len cmd对应的消息参数的长度，如果没有参数设置为0
- * @return                错误码，0代表成功，其他见TuyaProtocolErrorCode
+ * @return                错误码，0代表成功，-1代表失败
  */
-int TuyaProtocolStackOutput(uint8_t cmd, uint8_t *payload, uint32_t payload_len);
+int TuyaProtocolStackOutput(uint8_t cmd, uint8_t version, uint8_t *payload, uint16_t payload_len);
 
 #ifdef __cplusplus
 }
