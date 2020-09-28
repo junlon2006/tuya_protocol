@@ -70,10 +70,11 @@ static uint16_t _get_payload_len(tuya_protocol_packet_t *packet) {
 }
 
 static void _crc_calc(tuya_protocol_packet_t *packet) {
-    uint16_t crc_idx = sizeof(tuya_protocol_packet_t) + _get_payload_len(packet);
-    uint16_t crc_payload_len = crc_idx;
+    uint16_t crc_idx = _get_payload_len(packet);
+    uint16_t crc_payload_len = crc_idx + sizeof(tuya_protocol_packet_t);
     uint8_t *p = (uint8_t *)packet;
     int i;
+
     packet->payload[crc_idx] = 0;
     for (i = 0; i < crc_payload_len; i++) {
         packet->payload[crc_idx] += p[i];
@@ -81,7 +82,7 @@ static void _crc_calc(tuya_protocol_packet_t *packet) {
 }
 
 static bool _is_crc_valid(tuya_protocol_packet_t *packet) {
-    uint16_t crc_idx = sizeof(tuya_protocol_packet_t) + _get_payload_len(packet);
+    uint16_t crc_idx = _get_payload_len(packet);
     uint8_t crc = packet->payload[crc_idx];
     _crc_calc(packet);
     return (crc == packet->payload[crc_idx]);
@@ -93,10 +94,12 @@ static void _one_pcb_done(uint8_t *pcb) {
         LOGW(TAG, "crc invalid");
         return;
     }
+
     if (NULL == g_business.on_user) {
         LOGE(TAG, "not register user hook");
         return;
     }
+
     g_business.on_user(packet->payload, _get_payload_len(packet), packet->cmd);
 }
 
@@ -189,6 +192,7 @@ int TuyaProtocolStackOutput(uint8_t cmd, uint8_t version, uint8_t *payload, uint
     packet->cmd             = cmd;
     packet->payload_h_8_len = (payload_len >> 8) & 0xff;
     packet->payload_l_8_len = payload_len & 0xff;
+    memcpy(packet->payload, payload, payload_len);
     _crc_calc(packet);
 
     if (NULL == g_business.on_send) {
