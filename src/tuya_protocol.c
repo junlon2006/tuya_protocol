@@ -62,7 +62,7 @@ void TuyaProtocolStackRegisterHooks(tuya_protocol_hooks_t *hooks) {
 int TuyaProtocolStackInit(send_data send_handler, user_data user_handler) {
     g_business.on_send = send_handler;
     g_business.on_user = user_handler;
-    g_business.init = true;
+    g_business.init    = true;
     LOGT(TAG, "tuya stack init success");
     return 0;
 }
