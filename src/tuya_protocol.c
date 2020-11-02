@@ -111,7 +111,7 @@ static void _one_pcb_done(uint8_t *pcb) {
 #define LAYOUT_SYNC_IDX             (2)
 #define LAYOUT_PAYLOAD_LEN_HIGH_IDX (4)
 #define LAYOUT_PAYLOAD_LEN_LOW_IDX  (5)
-#define REST_STACK()                do { length = 1; idx = 0;} while (0)
+#define REST_STACK()                do {length = 1; idx = 0;} while (0)
 static void _protocol_buffer_generate_byte_by_byte(unsigned char recv_c) {
     static uint8_t *protocol_packet_buffer = NULL;
     static uint16_t protocol_packet_buffer_len = DEFAULT_PROTOCOL_BUF_SIZE;
